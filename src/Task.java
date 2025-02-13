@@ -2,9 +2,9 @@ class Task {
     protected String title;
     protected String description;
     protected int id;
-    protected String status;
+    protected TaskStatus status;
 
-    public Task(String title, String description, String status) {
+    public Task(String title, String description, TaskStatus status) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -14,7 +14,7 @@ class Task {
         return title;
     }
 
-    public String getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
@@ -26,9 +26,11 @@ class Task {
         this.id = id;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
+
+
 
     @Override
     public String toString() {

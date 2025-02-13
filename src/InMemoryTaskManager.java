@@ -1,44 +1,50 @@
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 
-public class Manager {
-    static Map<Integer, Task> tasks = new HashMap<>();
-    static Map<Integer, Subtask> subtasks = new HashMap<>();
+public class InMemoryTaskManager implements TaskManager {
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, Subtask> subtasks = new HashMap<>();
+    public HistoryManager historyManager = Managers.getDefaultHistory();
 
     private static int currentId = 1;
 
     // method to return all tasks
-    static ArrayList<Task> returnAllTasks() {
+    @Override
+    public ArrayList<Task> returnAllTasks() {
         return new ArrayList<>(tasks.values());
     }
 
     // method to remove all tasks
-    static void removeAllTasks() {
+    @Override
+    public void removeAllTasks() {
         tasks.clear();
         subtasks.clear();
         currentId = 1;
     }
 
     // method to get a task by ID
-    static Task returnTaskById(int id) {
-        if (tasks.get(id) == null){
-            return subtasks.get(id);
-        } else {
-            return tasks.get(id);
+    @Override
+    public Task returnTaskById(int id) {
+        Task task = tasks.get(id);
+        if (task == null){
+            task = subtasks.get(id);
         }
+        if (task != null) {
+            historyManager.add(task);
+        }
+        return task;
     }
 
     // method to add a task
-    static void addTask(Task task) {
+    @Override
+    public void addTask(Task task) {
         task.setTaskId(currentId);
         tasks.put(currentId, task);
         currentId++;
     }
 
     // method to add a subtask
-    static void addSubtask(Subtask subtask, Epic epic) {
+    @Override
+    public void addSubtask(Subtask subtask, Epic epic) {
         subtask.setTaskId(currentId);
         subtasks.put(currentId, subtask);
         epic.addSubtask(subtask);
@@ -47,7 +53,8 @@ public class Manager {
     }
 
     // method to update a task or subtask
-    static void updateTask(int id, String newStatus) {
+    @Override
+    public void updateTask(int id, TaskStatus newStatus) {
         Task task = tasks.get(id);
         if (task == null) {
             task = subtasks.get(id); // check in subtasks
@@ -74,7 +81,8 @@ public class Manager {
     }
 
     // method to return subtasks
-    static void returnSubtask(int epicId) {
+    @Override
+    public void returnSubtask(int epicId) {
         Task task = tasks.get(epicId);
         if (task instanceof Epic epic) {
             List<Subtask> subtasks = epic.getSubtasks();
@@ -83,6 +91,7 @@ public class Manager {
                 for (Subtask obj : subtasks) {
                     System.out.println(" - " + obj.getTitle() + " (ID: " + obj.getId() + ", Status: "
                             + obj.getStatus() + ")");
+                    historyManager.add(obj);
                 }
             } else {
                 System.out.println("Epic " + epic.getTitle() + " has no subtasks.");
