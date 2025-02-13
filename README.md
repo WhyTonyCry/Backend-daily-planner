@@ -10,7 +10,7 @@
 - **Automatic Epic Status Updates** based on the state of its subtasks.
 - **Link Subtasks to Epics and Monitor Their Status**.
 - **Flexible Class Structure** to manage and extend data as needed.
-- **It can remember the history of your tasks.
+- **It can remember the history of your tasks**.
 
 ## Project Structure
 
