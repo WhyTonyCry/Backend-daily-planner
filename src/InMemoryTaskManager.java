@@ -21,6 +21,31 @@ public class InMemoryTaskManager implements TaskManager {
         currentId = 1;
     }
 
+    @Override
+    public void removeTaskByID(int id) {
+        Task task = tasks.get(id);
+        if (task instanceof Epic epic) {
+            // Удаляем все подзадачи эпика из истории
+            for (Subtask subtask : epic.getSubtasks()) {
+                historyManager.remove(subtask.getId());
+                subtasks.remove(subtask.getId());
+            }
+            // Удаляем сам эпик
+            tasks.remove(id);
+            historyManager.remove(id);
+        } else if (task != null) {
+            // Если обычная задача
+            tasks.remove(id);
+            historyManager.remove(id);
+        } else if (subtasks.containsKey(id)) {
+            subtasks.remove(id);
+            historyManager.remove(id);
+        } else {
+            System.out.println("Task with ID " + id + " not found.");
+        }
+    }
+
+
     // method to get a task by ID
     @Override
     public Task returnTaskById(int id) {
@@ -82,8 +107,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     // method to return subtasks
     @Override
-    public void returnSubtask(int epicId) {
-        Task task = tasks.get(epicId);
+    public void returnSubtask(int subId) {
+        Subtask subtask = subtasks.get(subId);
+        Task task = subtask.getParentEpic();
         if (task instanceof Epic epic) {
             List<Subtask> subtasks = epic.getSubtasks();
             if (!subtasks.isEmpty()) {
@@ -97,7 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
                 System.out.println("Epic " + epic.getTitle() + " has no subtasks.");
             }
         } else {
-            System.out.println("No Epic with ID: " + epicId);
+            System.out.println("No Epic with ID: " + subtask.getParentEpic());
         }
     }
 }

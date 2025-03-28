@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 
 public interface TaskManager {
     // method to return all tasks
@@ -10,6 +9,8 @@ public interface TaskManager {
 
     // method to get a task by ID
     Task returnTaskById(int id);
+
+    void removeTaskByID(int id);
 
     // method to add a task
     void addTask(Task task);
